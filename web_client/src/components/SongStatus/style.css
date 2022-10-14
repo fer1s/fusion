@@ -1,0 +1,132 @@
+.song_status {
+   position: fixed;
+   bottom: 0;
+   left: 0;
+   width: 100%;
+   height: 80px;
+   background-color: rgba(255, 255, 255, 0.05);
+   backdrop-filter: blur(5px);
+   border-top: 1px solid rgba(255, 255, 255, 0.15);
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   align-items: center;
+   padding: 5px 15px;
+   z-index: 100;
+}
+
+.song_status .song h1 {
+   font-size: 17px;
+   user-select: none;
+}
+
+.song_status .song p {
+   font-size: 15px;
+   color: rgb(146, 146, 146);
+   user-select: none;
+}
+
+.song_status .controls {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+}
+
+.song_status .slider {
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+}
+
+.song_status .slider .current_time,
+.song_status .slider .song_duration {
+   color: #727272;
+   font-size: 12px;
+}
+
+.song_status .slider .seek_bar {
+   -webkit-appearance: none;
+   width: 20vw;
+   height: 5px;
+   border-radius: 10px;
+   background: #4e4e4e;
+   overflow: hidden;
+   cursor: pointer;
+   margin: 0 5px;
+}
+
+.song_status .slider input.seek_bar::-webkit-slider-thumb{
+   -webkit-appearance: none;
+   width: 1px;
+   height: 20px;
+   box-shadow: -400px 0 0 400px #8a8a8a;
+}
+
+.song_status .buttons,
+.song_status .slider {
+   margin: 5px 0;
+}
+
+.song_status .buttons button {
+   background-color: transparent;
+   outline: none;
+   color: #fff;
+   border: none;
+   font-size: 28px;
+   text-align: center;
+   width: 35px;
+   height: 35px;
+   line-height: 4px;
+   cursor: pointer;
+   margin: 0 5px;
+}
+
+button .padding-left {
+   margin-left: 4px;
+}
+
+.song_status .buttons button.play {
+   background-color: #fff;
+   color: #000;
+   border-radius: 50%;
+}
+
+.song_status .volume {
+   height: 100%;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: flex-start;
+}
+
+.song_status .volume p {
+    font-size: 12px;
+    color: rgb(110, 110, 110);
+    margin-bottom: 5px;
+}
+
+.song_status .volume p span {
+    color: #fcbc0e;
+}
+
+.song_status .volume input {
+   -webkit-appearance: none;
+   width: 6vw;
+   height: 5px;
+   border-radius: 10px;
+   background: #4e4e4e;
+   overflow: hidden;
+   cursor: pointer;
+   margin: 0 5px;
+}
+
+.song_status .volume input::-webkit-slider-thumb{
+   -webkit-appearance: none;
+   width: 1px;
+   height: 20px;
+   box-shadow: -400px 0 0 400px #8a8a8a;
+}
+
+audio {
+   display: none;
+}
