@@ -59,7 +59,7 @@ const SongStatus = ({ artist, title, songID }) => {
         }
     }, [])
     React.useEffect(() => {
-        if(currentTime === duration) setIsPlaying(false);
+        if(currentTime === duration) next();
     }, [currentTime, duration])
     React.useEffect(() => {
         socket.on('song', () => {

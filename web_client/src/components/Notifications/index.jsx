@@ -1,5 +1,5 @@
 import React from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { SocketContext } from '../../contexts/SocketContext';
 import './style.css'
 
