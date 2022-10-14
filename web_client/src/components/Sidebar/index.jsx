@@ -2,13 +2,23 @@ import './style.css'
 import React from 'react'
 import { SocketContext } from '../../contexts/SocketContext';
 
-const Sidebar = ({song}) => {
+const Sidebar = ({ song }) => {
 
   const socket = React.useContext(SocketContext)
   const [devices, setDevices] = React.useState(null);
   const [percentage, setPercentage] = React.useState(0);
   const [youtubeURL, setYoutubeURL] = React.useState("");
   const [devicename, setDevicename] = React.useState("");
+
+  const parseYT = (url) => {
+    const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    if (match && match[2].length === 11) {
+      return match[2];
+    } else {
+      return url
+    }
+  }
 
   React.useEffect(() => {
     socket.emit('device_connected', `Web client ${Math.floor(Math.random() * (999 - 100 + 1) + 100)}`)
@@ -18,13 +28,13 @@ const Sidebar = ({song}) => {
 
     socket.on('download_progress', (percentage) => {
       setPercentage(percentage)
-      
-      if(percentage === 100) socket.emit('fetch_songs')
+
+      if (percentage === 100) socket.emit('fetch_songs')
     })
   }, [socket])
 
   const downloadLink = () => {
-    socket.emit('download_youtube', youtubeURL)
+    socket.emit('download_youtube', parseYT(youtubeURL))
     setYoutubeURL('');
   }
 
@@ -42,7 +52,7 @@ const Sidebar = ({song}) => {
       {devices && (
         <div className='devices'>
           <h1>Devices</h1>
-          <input type="text" placeholder='Name...' value={devicename} onChange={(e) => {setDevicename(e.target.value)}} />
+          <input type="text" placeholder='Name...' value={devicename} onChange={(e) => { setDevicename(e.target.value) }} />
           <button onClick={changeName}>Change</button>
           {devices.map((device, index) => {
             return <p key={index} id={device}><i className='bx bx-devices'></i> {device}</p>
@@ -51,9 +61,9 @@ const Sidebar = ({song}) => {
       )}
       <div>
         <h1>Add song</h1>
-        <input type="text" placeholder='YouTube URL...' value={youtubeURL} onChange={(e) => {setYoutubeURL(e.target.value)}} />
+        <input type="text" placeholder='YouTube URL...' value={youtubeURL} onChange={(e) => { setYoutubeURL(e.target.value) }} />
         <button onClick={downloadLink}>Add</button>
-        {(percentage > 0 && percentage < 100) && <input type="range" min={0} max={100} value={percentage}  />} 
+        {(percentage > 0 && percentage < 100) && <input type="range" min={0} max={100} value={percentage} />}
       </div>
     </div>
   )

@@ -82,7 +82,6 @@ io.on('connection', (socket) => {
    })
 
    socket.on('play_song', async (song) => {
-      console.log(song)
       if (!song) return
       const findSong = await SongSchema.findOne({ $or: [{ _id: song }, { title: song }, { filename: song }] })
       if (!findSong) return console.log('Song not found!')
@@ -102,7 +101,7 @@ io.on('connection', (socket) => {
 
    socket.on('next_song', async (act_song) => {
       let next = await SongSchema.findOne({_id: {$gt: act_song}}).sort({_id: 1}).limit(1)
-      if(!next) return;
+      if(!next) next = await SongSchema.findOne().sort({createdDate: 1});
       const nextID = await next.get('_id').toString();
 
       socket.emit('song', {
