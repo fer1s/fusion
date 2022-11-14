@@ -3,6 +3,8 @@ const SongSchema = require('./database/schemas/Song')
 const shell = require('shelljs')
 const path = require('path')
 
+const telegramNotify = require('./utils/telegramNotify')
+
 const devices = []
 let activeDeviceID
 
@@ -28,9 +30,7 @@ const removeDevice = (id, socket) => {
    devices.splice(devices.indexOf(id), 1)
 }
 
-
 io.on('connection', (socket) => {
-
    socket.name = socket.id
    socket.on('device_connected', (device_name) => {
       socket.name = device_name
@@ -41,7 +41,7 @@ io.on('connection', (socket) => {
       removeDevice(socket.name, socket)
       update(socket)
    })
-   socket.on('set_devicename', (device_name) =>{
+   socket.on('set_devicename', (device_name) => {
       removeDevice(socket.name, socket)
       socket.name = device_name
       addDevice(socket.name, socket)
@@ -64,20 +64,23 @@ io.on('connection', (socket) => {
             filename: path.basename(data.file),
          })
          await newSong.save()
-         const songs = await SongSchema.find();
+         const songs = await SongSchema.find()
 
-         await socket.emit('songs_list', songs);
-         await socket.broadcast.emit('songs_list', songs);
+         await socket.emit('songs_list', songs)
+         await socket.broadcast.emit('songs_list', songs)
          notification(socket, 'Success', 'Downloaded new song from YouTube!', '#19b459')
+         telegramNotify.notify('Success', `Downloaded new song from YouTube!\n\n*Artist* ${data.artist}\n*Title* ${data.title}`)
       })
 
       YD.on('error', (err) => {
          console.log(err)
          notification(socket, 'Error', 'Some error.', '#f54242')
+         telegramNotify.notify('Error', 'Some error while downloading song...')
       })
 
       YD.on('progress', function (progress) {
          socket.emit('download_progress', progress.progress.percentage)
+         telegramNotify.notify('Downloading', `Progress: ${progress.progress.percentage.toFixed()}%`, true)
       })
    })
 
@@ -93,33 +96,37 @@ io.on('connection', (socket) => {
       })
    })
 
-   socket.on('fetch_songs', async() => {
-      const songs = await SongSchema.find();
+   socket.on('fetch_songs', async () => {
+      const songs = await SongSchema.find()
 
-      await socket.emit('songs_list', songs);
+      await socket.emit('songs_list', songs)
    })
 
    socket.on('next_song', async (act_song) => {
-      let next = await SongSchema.findOne({_id: {$gt: act_song}}).sort({_id: 1}).limit(1)
-      if(!next) next = await SongSchema.findOne().sort({createdDate: 1});
-      const nextID = await next.get('_id').toString();
+      let next = await SongSchema.findOne({ _id: { $gt: act_song } })
+         .sort({ _id: 1 })
+         .limit(1)
+      if (!next) next = await SongSchema.findOne().sort({ createdDate: 1 })
+      const nextID = await next.get('_id').toString()
 
       socket.emit('song', {
          id: nextID,
          title: next.title,
-         artist: next.artist
+         artist: next.artist,
       })
    })
 
    socket.on('previous_song', async (act_song) => {
-      const previous = await SongSchema.findOne({_id: {$lt: act_song}}).sort({_id: -1}).limit(1)
-      if(!previous) return;
-      const prevID = await previous.get('_id').toString();
+      const previous = await SongSchema.findOne({ _id: { $lt: act_song } })
+         .sort({ _id: -1 })
+         .limit(1)
+      if (!previous) return
+      const prevID = await previous.get('_id').toString()
 
       socket.emit('song', {
          id: prevID,
          title: previous.title,
-         artist: previous.artist
+         artist: previous.artist,
       })
    })
 })

@@ -15,6 +15,8 @@ const cors = require('cors')
 global.io = io
 const PORT = process.env.PORT
 
+if(!process.env.TELEGRAM_TOKEN || !process.env.TELEGRAM_CHAT_ID) console.log("Telegram notifications disabled, because no telegram bot token provided!")
+
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
